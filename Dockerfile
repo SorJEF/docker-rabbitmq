@@ -12,8 +12,8 @@ RUN yum -y install gawk bind-utils
 # Install EPEL6 for additional packages
 RUN yum -y install http://mirror.pnl.gov/epel/6/i386/epel-release-6-8.noarch.rpm
 
-# install rabbitmq-server 3.1.5
-RUN yum -y install http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5-1.noarch.rpm
+# install rabbitmq-server 3.3.1
+RUN yum -y install http://www.rabbitmq.com/releases/rabbitmq-server/v3.3.1/rabbitmq-server-3.3.1-1.noarch.rpm
 
 # activate plugins
 RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_mqtt rabbitmq_stomp rabbitmq_management  rabbitmq_management_agent rabbitmq_management_visualiser rabbitmq_federation rabbitmq_federation_management sockjs
