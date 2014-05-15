@@ -13,6 +13,19 @@ sleep 10
 
 if [[ -z "$CLUSTER" ]]; then
 	echo "Running as master"
+	rabbitmqctl add_vhost wot
+	rabbitmqctl add_vhost management
+	rabbitmqctl add_user prod $PRODPASSWORD
+	rabbitmqctl add_user wot $WOTPASSWORD
+	rabbitmqctl add_user admin $ADMINPASSWORD
+	rabbitmqctl set_user_tags wot management
+	rabbitmqctl set_user_tags admin administrator
+	rabbitmqctl set_permissions admin '.*' '.*' '.*'
+	rabbitmqctl set_permissions -p wot admin '.*' '.*' '.*'
+	rabbitmqctl set_permissions -p management admin '.*' '.*' '.*'
+	rabbitmqctl set_permissions -p wot wot '.*' '.*' '.*'
+	rabbitmqctl set_permissions -p management wot '.*' '.*' '.*'
+	rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
 else
 	echo "Joining cluster at $CLUSTER"
 	rabbitmqctl stop_app

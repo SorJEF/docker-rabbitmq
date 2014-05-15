@@ -120,7 +120,7 @@ set -f
 exec ${ERL_DIR}erl \
     -pa ${RABBITMQ_EBIN_ROOT} \
     ${RABBITMQ_START_RABBIT} \
-    -name ${RABBITMQ_NODENAME} \
+    -sname ${RABBITMQ_NODENAME} \
     -boot "${SASL_BOOT_FILE}" \
     ${RABBITMQ_CONFIG_ARG} \
     +W w \
