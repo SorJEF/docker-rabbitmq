@@ -20,8 +20,9 @@ if [[ -z "$CLUSTER" ]]; then
 	rabbitmqctl add_user prod $PRODPASSWORD
 	rabbitmqctl add_user wot $WOTPASSWORD
 	rabbitmqctl add_user admin $ADMINPASSWORD
-	rabbitmqctl set_user_tags wot management
-	rabbitmqctl set_user_tags admin administrator
+	rabbitmqctl set_user_tags prod wot-observer
+	rabbitmqctl set_user_tags wot management WOT wot-observer
+	rabbitmqctl set_user_tags admin administrator WOT wot-administrator
 	rabbitmqctl set_permissions admin '.*' '.*' '.*'
 	rabbitmqctl set_permissions -p wot admin '.*' '.*' '.*'
 	rabbitmqctl set_permissions -p management admin '.*' '.*' '.*'
