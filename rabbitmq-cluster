@@ -1,9 +1,15 @@
 #!/bin/bash
 
+HOSTNAME=$(hostname)
+
+echo "Starting RabbitMQ on ${HOSTNAME}"
+
 CONFIG=$(dig @${DNSSERVER} TXT ${HOSTNAME} | grep "^${HOSTNAME}\." | awk '{ print $5}')
-CLUSTER=$(echo $CONFIG | gawk -F ";" 'match($0,/rabbitmq_cluster=([^;]+)/,m) {print m[1]}' | sed 's%\\;%%g' | sed 's%"%%g')
 
 echo "Discovering configuration [$CONFIG]"
+
+CLUSTER=$(echo $CONFIG | gawk -F ";" 'match($0,/rabbitmq_cluster=([^;]+)/,m) {print m[1]}' | sed 's%\\;%%g' | sed 's%"%%g')
+
 echo "Found cluster [$CLUSTER]"
 
 echo "Starting RabbitMQ"
@@ -12,6 +18,8 @@ echo "Starting RabbitMQ"
 sleep 10
 
 if [[ -z "$CLUSTER" ]]; then
+	echo "Loading passwords"
+	. /.passwords
 	echo "Running as master"
 	sleep 10
 	echo "Configuring master"
