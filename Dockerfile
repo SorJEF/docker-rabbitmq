@@ -2,15 +2,10 @@
 #
 # VERSION 0.1
 
-FROM centos
+FROM cthulhuology/devel
 MAINTAINER Dave Goehrig dave@dloh.org
 
-# We need the developer tools to build the occasional add on or two
-RUN yum -y groupinstall "Development Tools"
 RUN yum -y install gawk bind-utils
-
-# Install EPEL6 for additional packages
-RUN yum -y install http://mirror.pnl.gov/epel/6/i386/epel-release-6-8.noarch.rpm
 
 # install rabbitmq-server 3.3.1
 RUN yum -y install http://www.rabbitmq.com/releases/rabbitmq-server/v3.3.1/rabbitmq-server-3.3.1-1.noarch.rpm
