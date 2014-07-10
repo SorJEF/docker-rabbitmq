@@ -8,7 +8,7 @@ all : container
 cookie: 
 	./cookie
 
-container: cookie
+container: 
 	docker -H $$(ifconfig eth1 | gawk 'match($$0,/addr:([0-9]+.[0-9]+.[0-9]+.[0-9]+)/,m) { print m[1] }'):5555 build -t wotio/rabbitmq .
 
 run :
