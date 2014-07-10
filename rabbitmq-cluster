@@ -1,10 +1,11 @@
 #!/bin/bash
 
-HOSTNAME=$(hostname)
+FQDN=$(hostname -s).wot.io
+export RABBITMQNODE_NAME=rabbit@$(hostname -s)
 
-echo "Starting RabbitMQ on ${HOSTNAME}"
+echo "Starting RabbitMQ on ${FQDN}"
 
-CONFIG=$(dig @${DNSSERVER} TXT ${HOSTNAME} | grep "^${HOSTNAME}\." | awk '{ print $5}')
+CONFIG=$(dig @${DNSSERVER} TXT ${FQDN} | grep "^${FQDN}\." | awk '{ print $5}')
 
 echo "Discovering configuration [$CONFIG]"
 
@@ -37,6 +38,7 @@ if [[ -z "$CLUSTER" ]]; then
 	rabbitmqctl set_permissions -p wot wot '.*' '.*' '.*'
 	rabbitmqctl set_permissions -p management wot '.*' '.*' '.*'
 	rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
+	echo "RabbitMQ master configured... running..."
 else
 	echo "Joining cluster at $CLUSTER"
 	rabbitmqctl stop_app
