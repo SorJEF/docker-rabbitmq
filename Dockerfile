@@ -24,14 +24,6 @@ ADD erlang.cookie /var/lib/rabbitmq/.erlang.cookie
 RUN chmod 400 /var/lib/rabbitmq/.erlang.cookie
 RUN chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 
-# install a custom rabbitmq-server that uses CONTAINER_SERVER as an env var
-ADD ./rabbitmq-server /usr/lib/rabbitmq/bin/rabbitmq-server
-RUN chmod 755 /usr/lib/rabbitmq/bin/rabbitmq-server
-
-# Update rabbitmqctl
-#ADD ./rabbitmqctl /usr/lib/rabbitmq/bin/rabbitmqctl
-#RUN chmod 755 /usr/lib/rabbitmq/bin/rabbitmqctl
-
 # install a script to setup the cluster based on DNS
 ADD ./rabbitmq-cluster /usr/sbin/rabbitmq-cluster
 
