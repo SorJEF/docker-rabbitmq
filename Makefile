@@ -5,6 +5,9 @@ all : container
 
 .PHONY: container cookie
 
+clean:
+	echo "clean"
+
 cookie: 
 	./cookie
 
