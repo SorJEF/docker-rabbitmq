@@ -16,6 +16,9 @@ RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_mqtt rabbitmq_stomp rabbitmq_mana
 # install our passwords
 ADD passwords /.passwords
 
+# install the rabbitmq config file
+ADD rabbitmq.config /etc/rabbitmq/rabbitmq.config
+
 # install our erlang.cookie
 ADD erlang.cookie /.erlang.cookie
 RUN chmod 400 /.erlang.cookie

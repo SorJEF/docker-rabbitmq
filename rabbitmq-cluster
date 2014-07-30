@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -u
+set -e
+
 FQDN=$(hostname -s).wot.io
 export RABBITMQNODE_NAME=rabbit@$(hostname -s)
 
@@ -12,6 +15,10 @@ echo "Discovering configuration [$CONFIG]"
 CLUSTER=$(echo $CONFIG | gawk -F ";" 'match($0,/rabbitmq_cluster=([^;]+)/,m) {print m[1]}' | sed 's%\\;%%g' | sed 's%"%%g')
 
 echo "Found cluster [$CLUSTER]"
+
+echo "Configuring RabbitMQ for LDAP auth"
+sed  -i 's/%LDAP_SERVER%/'${LDAP_SERVER:-"ldap.wot.io"}'/;
+		s/%RABBITMQ_PASSWORD%/'${RABBITMQ_PASSWORD}'/' /etc/rabbitmq/rabbitmq.config
 
 echo "Starting RabbitMQ"
 /usr/lib/rabbitmq/bin/rabbitmq-server &
