@@ -1,17 +1,20 @@
-
-
-
 all : container
 
 .PHONY: container cookie
 
 clean:
-	echo "clean"
+	rm -f erlang.cookie
+	rm -f passwords
+
+passwords:
+	echo "PRODPASSWORD=$$(pwgen -s 12 1)" > passwords
+	echo "WOTPASSWORD=$$(pwgen -s 12 1)" >> passwords
+	echo "ADMINPASSWORD=$$(pwgen -s 12 1)" >> passwords
 
 cookie: 
 	./cookie
 
-container: 
+container: cookie passwords
 	docker -H $$(ifconfig eth1 | gawk 'match($$0,/addr:([0-9]+.[0-9]+.[0-9]+.[0-9]+)/,m) { print m[1] }'):5555 build -t wotio/rabbitmq .
 
 run :
