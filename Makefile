@@ -7,6 +7,7 @@ clean:
 	rm -f passwords
 
 passwords:
+	which pwgen || grep -q Ubuntu /etc/lsb-release && sudo apt-get install pwgen
 	echo "PRODPASSWORD=$$(pwgen -s 12 1)" > passwords
 	echo "WOTPASSWORD=$$(pwgen -s 12 1)" >> passwords
 	echo "ADMINPASSWORD=$$(pwgen -s 12 1)" >> passwords
