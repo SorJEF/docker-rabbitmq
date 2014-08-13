@@ -8,7 +8,7 @@ export RABBITMQNODE_NAME=rabbit@$(hostname -s)
 
 echo "Starting RabbitMQ on ${FQDN}"
 
-CONFIG=$(dig +short @${DNSSERVER} TXT ${FQDN})
+CONFIG=$(dig +short @${DNSSERVER} TXT ${FQDN} || true)
 
 echo "Discovering configuration [$CONFIG]"
 
