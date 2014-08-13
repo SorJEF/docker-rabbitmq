@@ -8,11 +8,11 @@ export RABBITMQNODE_NAME=rabbit@$(hostname -s)
 
 echo "Starting RabbitMQ on ${FQDN}"
 
-CONFIG=$(dig @${DNSSERVER} TXT ${FQDN} | grep "^${FQDN}\." | awk '{ print $5}')
+CONFIG=$(dig +short @${DNSSERVER} TXT ${FQDN})
 
 echo "Discovering configuration [$CONFIG]"
 
-CLUSTER=$(echo $CONFIG | gawk -F ";" 'match($0,/rabbitmq_cluster=([^;]+)/,m) {print m[1]}' | sed 's%\\;%%g' | sed 's%"%%g')
+CLUSTER=$(echo $CONFIG | gawk 'match($0,/rabbitmq_cluster=([^ ]+)/,m) {print m[1]}' | sed 's%"%%g')
 
 echo "Found cluster [$CLUSTER]"
 
