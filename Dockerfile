@@ -2,8 +2,8 @@
 #
 # VERSION 0.1
 
-FROM cthulhuology/devel
-MAINTAINER Dave Goehrig dave@dloh.org
+FROM docker.wot.io:5000/wotio/nodejs
+MAINTAINER wot.io devs <dev@wot.io>
 
 RUN yum -y install gawk bind-utils
 
