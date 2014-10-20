@@ -2,7 +2,7 @@
 #
 # VERSION 0.1
 
-FROM docker.wot.io:5000/wotio/nodejs
+FROM docker.wot.io:5000/wotio/nodejs:0.0.1
 MAINTAINER wot.io devs <dev@wot.io>
 
 RUN yum -y install gawk bind-utils
