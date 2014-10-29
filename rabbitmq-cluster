@@ -39,10 +39,17 @@ if [[ -z "$CLUSTER" ]]; then
 	rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
 	echo "RabbitMQ master configured... running..."
 else
-	echo "Joining cluster at $CLUSTER"
 	rabbitmqctl stop_app
 	rabbitmqctl reset
-	rabbitmqctl join_cluster $CLUSTER
+	echo "Getting available rabbit servers from cluster config"
+	npm install -g JSON.sh &> /dev/null
+	curl http://${DNSSERVER}:7001/rabbitmq 2> /dev/null | JSON.sh | egrep "^\[[^A-Za-z]+\].*{\"config\":{\"f1\":\".*\",\"f2\":\"rabbitmq.hostname\"" | cut -d '"' -f 14 | uniq | while read line; do
+		rabbitmqctl join_cluster rabbit@${line}
+		if [ $? -eq 0 ]; then
+		 echo "Joined cluster at rabbit@${line}"
+		 break;
+		fi
+	done
 	rabbitmqctl start_app
 fi
 
