@@ -3,6 +3,7 @@
 set -u
 set -e
 
+CLUSTER=${CLUSTER:-''}
 FQDN=$(hostname -s).wot.io
 export RABBITMQNODE_NAME=rabbit@$(hostname -s)
 
@@ -11,6 +12,9 @@ echo "Starting RabbitMQ on ${FQDN}"
 echo "Configuring RabbitMQ for LDAP auth"
 sed  -i 's/%LDAP_SERVER%/'${LDAP_SERVER:-"ldap.wot.io"}'/;
 		s/%RABBITMQ_PASSWORD%/'${RABBITMQ_PASSWORD}'/' /etc/rabbitmq/rabbitmq.config
+
+echo "Setting RabbitMQ Erlang cookie"
+install -o rabbitmq -g rabbitmq -m 0400 /.erlang.cookie /var/lib/rabbitmq/.erlang.cookie
 
 echo "Starting RabbitMQ"
 /usr/lib/rabbitmq/bin/rabbitmq-server &

@@ -1,6 +1,7 @@
 ENVS = --dns 172.17.42.1  -e DNSSERVER=$${DNS_SERVER:-'172.17.42.1'} -e RABBITMQ_PASSWORD=$${RABBITMQ_PASSWORD} -e LDAP_SERVER=$${LDAP_SERVER:-'ldap.wot.io'} -h $$(hostname -s)
 PORTS = -p 5672:5672 -p 15672:15672 -p 4369:4369 -p 9100:9100 -p 9101:9101 -p 9102:9102 -p 9103:9103 -p 9104:9104 -p 9105:9105 -p 25672:25672 
 CONTAINER = rabbitmq
+CLUSTER ?=
 VOLUMES = -v `pwd`/data:/var/lib/rabbitmq
 
 override define clean_
@@ -10,7 +11,7 @@ endef
 
 override define prep_
 	./cookie
-	which pwgen || grep -q Ubuntu /etc/lsb-release && sudo apt-get install pwgen
+	which pwgen || sudo apt-get install pwgen
 	echo "PRODPASSWORD=$$(pwgen -s 12 1)" > passwords
 	echo "WOTPASSWORD=$$(pwgen -s 12 1)" >> passwords
 	echo "ADMINPASSWORD=$$(pwgen -s 12 1)" >> passwords

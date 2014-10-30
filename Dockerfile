@@ -23,9 +23,6 @@ ADD rabbitmq.config /etc/rabbitmq/rabbitmq.config
 ADD erlang.cookie /.erlang.cookie
 RUN chmod 400 /.erlang.cookie
 RUN chown root:root /.erlang.cookie
-ADD erlang.cookie /var/lib/rabbitmq/.erlang.cookie
-RUN chmod 400 /var/lib/rabbitmq/.erlang.cookie
-RUN chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 
 # install a script to setup the cluster based on DNS
 ADD ./rabbitmq-cluster /usr/sbin/rabbitmq-cluster
