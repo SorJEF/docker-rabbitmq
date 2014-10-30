@@ -30,9 +30,6 @@ RUN chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 # install a script to setup the cluster based on DNS
 ADD ./rabbitmq-cluster /usr/sbin/rabbitmq-cluster
 
-# Install JSON parsing utility
-RUN npm install -g JSON.sh
-
 # expose AMQP port and Management interface and the epmd port, and the inet_dist_listen_min through inet_dist_listen_max ranges
 EXPOSE 5672
 EXPOSE 15672

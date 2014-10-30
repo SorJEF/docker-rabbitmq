@@ -2,7 +2,6 @@
 
 set -u
 set -e
-set -x
 
 FQDN=$(hostname -s).wot.io
 export RABBITMQNODE_NAME=rabbit@$(hostname -s)
@@ -40,17 +39,10 @@ if [[ -z "$CLUSTER" ]]; then
 	rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
 	echo "RabbitMQ master configured... running..."
 else
+	echo "Joining cluster at $CLUSTER"
 	rabbitmqctl stop_app
 	rabbitmqctl reset
-	echo "Getting available rabbit servers from cluster config"
-	curl http://${DNSSERVER}:7001/rabbitmq | JSON.sh | egrep "^\[[^A-Za-z]+\]" | cut -d '"' -f 2 | cut -d '.' -f 1 | while read line; do
-		echo "Trying ${line}..."
-		rabbitmqctl join_cluster rabbit@${line}
-		if [ $? -eq 0 ]; then
-		 echo "Joined cluster at rabbit@${line}"
-		 break;
-		fi
-	done
+	rabbitmqctl join_cluster $CLUSTER
 	rabbitmqctl start_app
 fi
 
