@@ -21,33 +21,38 @@ echo "Starting RabbitMQ"
 
 sleep 10
 
-if [[ -z "$CLUSTER" ]]; then
-	echo "Loading passwords"
-	. /.passwords
-	echo "Running as master"
-	sleep 10
-	echo "Configuring master"
-	rabbitmqctl add_vhost wot
-	rabbitmqctl add_vhost management
-	rabbitmqctl add_user prod $PRODPASSWORD
-	rabbitmqctl add_user wot $WOTPASSWORD
-	rabbitmqctl add_user admin $ADMINPASSWORD
-	rabbitmqctl set_user_tags prod wot-observer
-	rabbitmqctl set_user_tags wot management WOT wot-observer
-	rabbitmqctl set_user_tags admin administrator WOT wot-administrator
-	rabbitmqctl set_permissions admin '.*' '.*' '.*'
-	rabbitmqctl set_permissions -p wot admin '.*' '.*' '.*'
-	rabbitmqctl set_permissions -p management admin '.*' '.*' '.*'
-	rabbitmqctl set_permissions -p wot wot '.*' '.*' '.*'
-	rabbitmqctl set_permissions -p management wot '.*' '.*' '.*'
-	rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
-	echo "RabbitMQ master configured... running..."
+VHOSTS="$(rabbitmqctl list_vhosts | wc -l)"
+if [ "$VHOSTS" -lt "5" ]; then # 3 actual vhosts (/, wot, management) plus two lines from rabbitmqctl output
+	if [[ -z "$CLUSTER" ]]; then
+		echo "Loading passwords"
+		. /.passwords
+		echo "Running as master"
+		sleep 10
+		echo "Configuring master"
+		rabbitmqctl add_vhost wot
+		rabbitmqctl add_vhost management
+		rabbitmqctl add_user prod $PRODPASSWORD
+		rabbitmqctl add_user wot $WOTPASSWORD
+		rabbitmqctl add_user admin $ADMINPASSWORD
+		rabbitmqctl set_user_tags prod wot-observer
+		rabbitmqctl set_user_tags wot management WOT wot-observer
+		rabbitmqctl set_user_tags admin administrator WOT wot-administrator
+		rabbitmqctl set_permissions admin '.*' '.*' '.*'
+		rabbitmqctl set_permissions -p wot admin '.*' '.*' '.*'
+		rabbitmqctl set_permissions -p management admin '.*' '.*' '.*'
+		rabbitmqctl set_permissions -p wot wot '.*' '.*' '.*'
+		rabbitmqctl set_permissions -p management wot '.*' '.*' '.*'
+		rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
+		echo "RabbitMQ master configured... running..."
+	else
+		echo "Joining cluster at $CLUSTER"
+		rabbitmqctl stop_app
+		rabbitmqctl reset
+		rabbitmqctl join_cluster $CLUSTER
+		rabbitmqctl start_app
+	fi
 else
-	echo "Joining cluster at $CLUSTER"
-	rabbitmqctl stop_app
-	rabbitmqctl reset
-	rabbitmqctl join_cluster $CLUSTER
-	rabbitmqctl start_app
+	echo "RabbitMQ already configured. Running."
 fi
 
 /bin/bash -l
