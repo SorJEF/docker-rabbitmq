@@ -21,15 +21,14 @@ echo "Starting RabbitMQ"
 
 sleep 10
 
-VHOSTS="$(rabbitmqctl list_vhosts | wc -l)"
-if [ "$VHOSTS" -lt "5" ]; then # 3 actual vhosts (/, wot, management) plus two lines from rabbitmqctl output
+CONFIGURED_VHOSTS="$(rabbitmqctl list_vhosts | wc -l)"
+if [ "$CONFIGURED_VHOSTS" -lt "5" ]; then # 3 actual vhosts (/, wot, management) plus two lines from rabbitmqctl output
 	if [[ -z "$CLUSTER" ]]; then
 		echo "Loading passwords"
 		. /.passwords
 		echo "Running as master"
 		sleep 10
 		echo "Configuring master"
-		rabbitmqctl add_vhost wot
 		rabbitmqctl add_vhost management
 		rabbitmqctl add_user prod $PRODPASSWORD
 		rabbitmqctl add_user wot $WOTPASSWORD
@@ -38,11 +37,16 @@ if [ "$VHOSTS" -lt "5" ]; then # 3 actual vhosts (/, wot, management) plus two l
 		rabbitmqctl set_user_tags wot management WOT wot-observer
 		rabbitmqctl set_user_tags admin administrator WOT wot-administrator
 		rabbitmqctl set_permissions admin '.*' '.*' '.*'
-		rabbitmqctl set_permissions -p wot admin '.*' '.*' '.*'
 		rabbitmqctl set_permissions -p management admin '.*' '.*' '.*'
-		rabbitmqctl set_permissions -p wot wot '.*' '.*' '.*'
 		rabbitmqctl set_permissions -p management wot '.*' '.*' '.*'
-		rabbitmqctl set_permissions -p wot prod '.*' '.*' '.*'
+
+		env | grep "^VHOSTS.*" | awk -F "=" '{print $2}' | while read -r line ; do
+			rabbitmqctl add_vhost $line
+			rabbitmqctl set_permissions -p $line admin '.*' '.*' '.*'
+			rabbitmqctl set_permissions -p $line prod '.*' '.*' '.*'
+			rabbitmqctl set_permissions -p $line wot '.*' '.*' '.*'
+		done
+
 		echo "RabbitMQ master configured... running..."
 	else
 		echo "Joining cluster at $CLUSTER"
