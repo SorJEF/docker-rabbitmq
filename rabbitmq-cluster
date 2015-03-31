@@ -59,4 +59,5 @@ else
 	echo "RabbitMQ already configured. Running."
 fi
 
-/bin/bash -l
+# 'Removed' to facilitate restart when a crash occurs
+# /bin/bash -l
