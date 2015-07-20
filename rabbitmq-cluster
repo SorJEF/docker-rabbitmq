@@ -6,6 +6,10 @@ set -e
 CLUSTER=${CLUSTER:-''}
 MESSAGE_TTL=${MESSAGE_TTL:-''} # milliseconds
 FQDN=$(hostname -s).wot.io
+ENV_PRODPASSWORD=${PRODPASSWORD:-''}
+ENV_WOTPASSWORD=${WOTPASSWORD:-''}
+ENV_ADMINPASSWORD=${ADMINPASSWORD:-''}
+
 export RABBITMQNODE_NAME=rabbit@$(hostname -s)
 
 set_message_policy() {
@@ -35,7 +39,18 @@ CONFIGURED_VHOSTS="$(rabbitmqctl list_vhosts | wc -l)"
 if [ "$CONFIGURED_VHOSTS" -lt "5" ]; then # 3 actual vhosts (/, wot, management) plus two lines from rabbitmqctl output
 	if [[ -z "$CLUSTER" ]]; then
 		echo "Loading passwords"
-		. /.passwords
+		[ -f /.passwords ] && source /.passwords
+
+		# Passwords from the environment override the embedded passwords.
+		PRODPASSWORD=${ENV_PRODPASSWORD:-${PRODPASSWORD}}
+		WOTPASSWORD=${ENV_WOTPASSWORD:-${WOTPASSWORD}}
+		ADMINPASSWORD=${ENV_ADMINPASSWORD:-${ADMINPASSWORD}}
+
+		if [ -z "${PRODPASSWORD}" ] || [ -z "${WOTPASSWORD}" ] || [ -z "${ADMINPASSWORD}" ]; then
+			echo "Local RabbitMQ passwords cannot be set."
+			exit 1
+		fi
+
 		echo "Running as master"
 		sleep 10
 		echo "Configuring master"
