@@ -27,17 +27,5 @@ RUN chown root:root /.erlang.cookie
 # install a script to setup the cluster based on DNS
 ADD ./rabbitmq-cluster /usr/sbin/rabbitmq-cluster
 
-# expose AMQP port and Management interface and the epmd port, and the inet_dist_listen_min through inet_dist_listen_max ranges
-EXPOSE 5672
-EXPOSE 15672
-EXPOSE 4369
-EXPOSE 9100
-EXPOSE 9101
-EXPOSE 9102
-EXPOSE 9103
-EXPOSE 9104
-EXPOSE 9105
-EXPOSE 25672
-
 # create a shell so we can configure clustering and stuff
-CMD /usr/sbin/rabbitmq-cluster 
+CMD /usr/sbin/rabbitmq-cluster
