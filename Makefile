@@ -23,4 +23,4 @@ override define test_
 endef
 
 include ../wot-make/docker.mk
-include ../wot-make/npm.mk
+# do not include ../wot-make/npm.mk
