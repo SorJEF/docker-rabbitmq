@@ -12,7 +12,7 @@ endef
 
 override define prep_
 	./cookie
-	which pwgen || sudo apt-get install pwgen
+	command -v pwgen || (command -v apt-get && sudo apt-get install pwgen) || (echo "'pwgen' is not installed or is not in the PATH" && false)
 	echo "PRODPASSWORD=$$(pwgen -s 12 1)" > passwords
 	echo "WOTPASSWORD=$$(pwgen -s 12 1)" >> passwords
 	echo "ADMINPASSWORD=$$(pwgen -s 12 1)" >> passwords
