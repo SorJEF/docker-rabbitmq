@@ -31,7 +31,7 @@ echo "Setting RabbitMQ Erlang cookie"
 install -o rabbitmq -g rabbitmq -m 0400 /.erlang.cookie /var/lib/rabbitmq/.erlang.cookie
 
 echo "Starting RabbitMQ"
-/usr/lib/rabbitmq/bin/rabbitmq-server &
+runuser -l rabbitmq '/usr/lib/rabbitmq/bin/rabbitmq-server' &
 
 sleep 10
 
